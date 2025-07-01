@@ -1,15 +1,18 @@
 import yt_dlp
 import os
 from moviepy.video.io.VideoFileClip import VideoFileClip
-def download_youtube_video(url, filename="downloaded_video.mp4"):
+def download_youtube_video(url):
     ydl_opts = {
-        'outtmpl': filename,
-        'format': 'best[ext=mp4]/best',
+        'outtmpl': 'input/%(title)s.%(ext)s',
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4',
+        'merge_output_format': 'mp4',
         'quiet': True,
     }
+
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-    return filename
+        info = ydl.extract_info(url, download=True)
+        return ydl.prepare_filename(info)
+
 def split_video(input_file, clip_length=30):
     output_dir = "output_shorts"
     os.makedirs(output_dir, exist_ok=True)
